@@ -5,7 +5,7 @@
   padding: 0;
   box-sizing: border-box;
   font-family: "Lato", sans-serif;
-  scrollbar-width: none
+  scrollbar-width: none;
 }
 
 body {
@@ -34,20 +34,17 @@ header h1 {
 
 .table-wrapper {
   height: 500px;
-  
   display: block;
   border: 1px solid #ccc;
   background: white;
-  padding: 0; 
-  overflow-x: auto;     
-  /* overflow-y: auto;  */
+  overflow-x: auto;
+  padding: 0;
 }
 
 .reusable-table {
   min-width: 800px;
   width: 100%;
   border-collapse: collapse;
-  /* table-layout: fixed; */
 }
 
 .reusable-table thead,
@@ -64,12 +61,13 @@ header h1 {
 .reusable-table th,
 .reusable-table td {
   border: 1px solid #ccc;
-  /* padding: 7px !important; */
   text-align: center;
   word-break: break-word;
   overflow: hidden;
+  padding: 8px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
-
 
 .reusable-table tbody {
   position: relative;
@@ -95,12 +93,6 @@ th.sortable {
   transform: translateY(-50%);
 }
 
-/* .no-data-div {
-  text-align: center;
-  margin: 20px auto;
-  color: red;
-  font-weight: bold;
-} */
 .no-data-div {
   position: absolute;
   top: 20%;
@@ -111,7 +103,7 @@ th.sortable {
   text-align: center;
 }
 
-.spinner {
+/* .spinner {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -123,7 +115,7 @@ th.sortable {
   border-radius: 50%;
   animation: spin 1s linear infinite;
   display: none;
-}
+} */
 
 @keyframes spin {
   0% {
@@ -135,11 +127,17 @@ th.sortable {
 }
 
 .search-section {
-  margin-top: 30px;
+  position: sticky;
+  top: 0;
+  background-color: #f5f7fa;
+  padding: 10px;
+  z-index: 1000;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid #ccc;
   margin-bottom: 20px;
 }
 
@@ -177,6 +175,18 @@ button:hover {
   background-color: rgba(231, 139, 72, 0.8);
 }
 
+thead th {
+  position: sticky;
+  top: 0;
+  background: #f5f5f5;
+  z-index: 1;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
 @media (max-width: 500px) {
   .search-section {
     flex-direction: column;
@@ -187,47 +197,4 @@ button:hover {
   button {
     width: 100%;
   }
-}
-table {
-  table-layout: fixed;
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 8px;
-  border: 1px solid #ccc;
-  text-align: center;
-  /* overflow: hidden; */
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-thead th {
-  position: sticky;
-  top: 0;
-  background: #f5f5f5;
-  z-index: 1;
-}
-.table-container {
-  width: 100%;
-  overflow-x: auto;
-}
-
-/* thead {
-  position: sticky;
-  top: 0;
-  background: white;
-  z-index: 10;
-} */
-
-.search-section {
-  position: sticky;
-  top: 0;
-  /* background-color: black; */
-  padding: 10px;
-  z-index: 1000;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ccc;
 }
