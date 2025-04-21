@@ -1,9 +1,11 @@
 export class TableComponent {
+  #data = [];
+  #filteredData = [];
   constructor(fetchDataCallBack, tableContainer, options = {}) {
     this.fetchDataCallBack = fetchDataCallBack;
     this.container = document.getElementById(tableContainer);
-    this.data = [];
-    this.filteredData = [];
+    // this.data = [];
+    // this.filteredData = [];
     // this.currentIndex = 0;
     // this.dataSize = 40;
     // this.isLoading = false;
@@ -19,8 +21,8 @@ export class TableComponent {
     // const spinner = document.getElementById("loading-spinner");
     // spinner.style.display = "block";
     try {
-      this.data = await this.fetchDataCallBack();
-      this.filteredData = [...this.data];
+      this.#data = await this.fetchDataCallBack();
+      this.#filteredData = [...this.#data];
       this.createFilterUI();
       this.table = document.createElement("table");
       this.table.classList.add("reusable-table");
@@ -55,15 +57,11 @@ export class TableComponent {
     });
     this.tbody.appendChild(tempRow);
     this.rowHeight = tempRow.getBoundingClientRect().height;
-    //console.log(this.rowHeight);
     this.tbody.removeChild(tempRow);
     const containerHeight = this.container.clientHeight;
-   // console.log(containerHeight)
     const visibleRows = Math.ceil(containerHeight / this.rowHeight);
-    //console.log(visibleRows);
     const buffer = 5;
     this.bufferRows = visibleRows + buffer;
-    //console.log(this.bufferRows)
     for (let i = 0; i < this.bufferRows; i++) {
       const tr = document.createElement("tr");
       this.columns.forEach(() => {
@@ -89,13 +87,13 @@ export class TableComponent {
     //const start = Math.max(0, firstVisibleIndex);
     //const end = Math.min(totalRows, start + visibleRowCount);
     const start = Math.max(0, Math.floor(scrollTop / this.rowHeight) - 2)
-    const end = Math.min(this.filteredData.length, start + visibleRowCount + 4);
+    const end = Math.min(this.#filteredData.length, start + visibleRowCount + 4);
   
     for (let i = 0; i < this.rowPool.length; i++) {
       const dataIndex = start + i;
       const tr = this.rowPool[i];
       if (dataIndex < end) {
-        const rowData = this.filteredData[dataIndex];
+        const rowData = this.#filteredData[dataIndex];
         const tds = tr.children;
         this.columns.forEach((col, colIndex) => {
           const cellData = rowData[col.key] ?? col.defaultValue ?? "N/A";
@@ -193,21 +191,41 @@ export class TableComponent {
     this.updateRows();
   }
 
+  // sortData() {
+  //   const key = this.sortKey;
+  //   this.filteredData.sort((a, b) => {
+  //     const value1 = a[key];
+  //     const value2 = b[key];
+
+  //     if (!isNaN(value1) && !isNaN(value2)) {
+  //       return this.sortAsc ? value1 - value2 : value2 - value1;
+  //     } else {
+  //       return this.sortAsc
+  //         ? String(value1).localeCompare(value2)
+  //         : String(value2).localeCompare(value1);
+  //     }
+  //   });
+  // }
+
   sortData() {
     const key = this.sortKey;
-    this.filteredData.sort((a, b) => {
-      const value1 = a[key];
-      const value2 = b[key];
-
+    this.#filteredData.sort((a, b) => {
+      let value1 = a[key];
+      let value2 = b[key];
+      if (value1 == null && value2 == null) return 0;
+      if (value1 == null) return this.sortAsc ? 1 : -1;
+      if (value2 == null) return this.sortAsc ? -1 : 1;
+      if (typeof value1 === "boolean") value1 = value1 ? 1 : 0;
+      if (typeof value2 === "boolean") value2 = value2 ? 1 : 0;
       if (!isNaN(value1) && !isNaN(value2)) {
         return this.sortAsc ? value1 - value2 : value2 - value1;
-      } else {
-        return this.sortAsc
-          ? String(value1).localeCompare(value2)
-          : String(value2).localeCompare(value1);
       }
+      return this.sortAsc
+        ? String(value1).localeCompare(String(value2))
+        : String(value2).localeCompare(String(value1));
     });
   }
+  
 
   updateSortArrow() {
     const arrows = document.querySelectorAll(".sort-arrow img");
@@ -239,14 +257,14 @@ export class TableComponent {
         const enteredInput = e.target.value.trim().toLowerCase(); 
         console.log(enteredInput);
         if (enteredInput === "") {
-          this.filteredData = [...this.data];
+          this.#filteredData = [...this.#data];
         } else {
-          this.filteredData = this.data.filter((row) =>
+          this.#filteredData = this.#data.filter((row) =>
             Object.values(row).some((value) =>
               String(value).toLowerCase().includes(enteredInput)
             )
           );
-          if (this.filteredData.length === 0) {
+          if (this.#filteredData.length === 0) {
             if (!isMessageDisplayed) {
               if (!this.container.contains(noDataMessage)) {
                 this.container.appendChild(noDataMessage);
@@ -276,7 +294,7 @@ export class TableComponent {
   reset() {
     // window.scrollTo(0,0)
     document.getElementById("filter-input").value = "";
-    this.filteredData = [...this.data];
+    this.#filteredData = [...this.#data];
     this.container.scrollTop = 0;
     this.sortKey = "";
     this.sortAsc = true;
