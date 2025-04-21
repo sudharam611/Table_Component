@@ -83,22 +83,14 @@ export class TableComponent {
   updateRows() {
     const scrollTop = this.container.scrollTop;
     const viewportHeight = this.container.clientHeight;
-    const totalRows = this.filteredData.length;
-    //console.log(totalRows)
-    const firstVisibleIndex = Math.floor(scrollTop / this.rowHeight);
-    //console.log('first', firstVisibleIndex);
+    // const totalRows = this.filteredData.length;
+    // const firstVisibleIndex = Math.floor(scrollTop / this.rowHeight);
     const visibleRowCount = Math.ceil(viewportHeight / this.rowHeight) + 10;
-    //console.log('visible',visibleRowCount)
-    const start = Math.max(0, firstVisibleIndex);
-    //console.log('start', start)
-    const end = Math.min(totalRows, start + visibleRowCount);
-    //console.group('end', end)
-
-    // this.rowPool.forEach(tr => {
-    //   tr.style.display = "none"; // Hide rows initially
-    // });
-
-
+    //const start = Math.max(0, firstVisibleIndex);
+    //const end = Math.min(totalRows, start + visibleRowCount);
+    const start = Math.max(0, Math.floor(scrollTop / this.rowHeight) - 2)
+    const end = Math.min(this.filteredData.length, start + visibleRowCount + 4);
+  
     for (let i = 0; i < this.rowPool.length; i++) {
       const dataIndex = start + i;
       const tr = this.rowPool[i];
@@ -233,45 +225,7 @@ export class TableComponent {
     });
   }
 
-  // addFilterListener() {
-  //   const input = document.getElementById("filter-input");
-  //   const noDataMessage = document.createElement("div");
-  //   noDataMessage.classList.add("no-data-div");
-  //   noDataMessage.textContent = "No results found for your search";
 
-  //   let isMessageDisplayed = false;
-  //   input.addEventListener(
-  //     "input",
-  //     this.debounce((e) => {
-  //       const enteredInput = e.target.value.trim().toLowerCase();
-  //       console.log(enteredInput);
-
-  //       if (enteredInput === "") {
-  //         this.filteredData = [...this.data];
-  //       } else {
-  //         this.filteredData = this.data.filter((row) =>
-  //           Object.values(row).some((value) =>
-  //             String(value).toLowerCase().includes(enteredInput)
-  //           )
-  //         );
-  //         if (this.filteredData.length === 0) {
-  //           if (!isMessageDisplayed) {
-  //             if (!this.container.contains(noDataMessage)) {
-  //               this.container.appendChild(noDataMessage);
-  //               isMessageDisplayed = true;
-  //             }
-  //           }
-  //         } else {
-  //           if (isMessageDisplayed) {
-  //             this.container.removeChild(noDataMessage);
-  //             isMessageDisplayed = false;
-  //           }
-  //         }
-  //       }
-  //       this.updateRows();
-  //     }, 300)
-  //   );
-  // }
   addFilterListener() {
     const input = document.getElementById("filter-input");
     const noDataMessage = document.createElement("div");
@@ -339,14 +293,27 @@ export class TableComponent {
   }
 
  
+  // addScrollListeners() {
+  //   this.container.addEventListener(
+  //     "scroll",
+  //     this.throttle(() => this.updateRows(), 50)
+  //   );
+  // }
+
   addScrollListeners() {
-    this.container.addEventListener(
-      "scroll",
-      this.throttle(() => this.updateRows(), 50)
-    );
+    let isUpdating = false;
+    this.container.addEventListener("scroll", () => {
+      if (!isUpdating) {
+        requestAnimationFrame(() => {
+          this.updateRows();  
+          isUpdating = false; 
+        });
+        isUpdating = true; 
+      }
+    });
   }
   
-
+ 
   throttle(fn, limit) {
     let lastCall = 0;
     return (...args) => {
