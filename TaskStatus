@@ -7,12 +7,11 @@
 
 //FIXED: Virtual rows miscalculation - Added a buffer of +2 rows above and below
 //FIXED: Smooth UI updated when scrolling - used requestAnimationFrame
+//FIXED: Sort function to handle all type of data including null and undefined
+//FIXED: Global variables like filteredData should be encapsulated
 //FIXED: Restructured the code
 
-
 //TOBEFIXED: No placeholder shown while loading next set of data - need to implement loader spinner
-//TOBEFIXED: Make the headers sticky while scholling
-//TOBEFIXED: Global variables like filteredData should be encapsulated
-//TOBEFIXED: Sorting re-applies on every render - memoize sorted data to avoid unnecessary computation
+//TOBEFIXED: Make the headers sticky while scrolling
 //TOBEFIXED: Custom cell rendering lacks fallback - If its undefined, nothing is rendered
 
